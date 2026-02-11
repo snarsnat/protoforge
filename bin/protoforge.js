@@ -79,12 +79,20 @@ async function main() {
     .argument('<description...>', 'Prototype description in quotes')
     .option('-t, --type <type>', 'Project type: hardware|software|hybrid|auto', 'auto')
     .option('-o, --output <dir>', 'Output directory (default from config)')
+    .option('--provider <provider>', 'AI provider override for this run (updates config)')
+    .option('--model <model>', 'Model override for this run (updates config)')
     .option('--stream', 'Stream tokens to stdout', false)
     .option('--zip', 'Create a zip archive of the generated project', false)
     .action(async (descriptionParts, opts) => {
       const description = descriptionParts.join(' ').trim();
       const { generatePrototype } = await import('../lib/core/generator.js');
       const { createProjectZip } = await import('../lib/core/output.js');
+      const { setAIConfig } = await import('../lib/core/config.js');
+
+      // Optional overrides (persisted to config to keep UX simple)
+      if (opts.provider || opts.model) {
+        setAIConfig({ provider: opts.provider, model: opts.model });
+      }
 
       showBanner();
 
@@ -152,6 +160,26 @@ async function main() {
       }
 
       process.stdout.write(JSON.stringify(getConfig(), null, 2) + '\n');
+    });
+
+  program
+    .command('install')
+    .description('Print recommended install commands for your system')
+    .action(() => {
+      showBanner();
+      process.stdout.write(
+        [
+          'Install (npm):',
+          '  npm install -g protoforge',
+          '',
+          'From source:',
+          '  git clone https://github.com/snarsnat/protoforge.git',
+          '  cd protoforge',
+          '  npm install',
+          '  npm link',
+          ''
+        ].join('\n')
+      );
     });
 
   program
