@@ -15,7 +15,8 @@
   "scripts": {
     "start": "node bin/protoforge.js",
     "dev": "node --watch bin/protoforge.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "pub": "npm test && npm publish"
   },
   "keywords": [
@@ -61,13 +62,15 @@
     "open": "^10.2.0",
     "ora": "^8.2.0",
     "react": "^19.2.4",
-    "socket.io": "^4.8.3"
+    "socket.io": "^4.8.3",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "esbuild": "^0.27.3",
     "esbuild-register": "^3.6.0",
     "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0"
+    "eslint-config-prettier": "^9.1.0",
+    "vitest": "^3.2.4"
   },
   "publishConfig": {
     "access": "public"

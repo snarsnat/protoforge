@@ -283,6 +283,21 @@ ProtoForge stores configuration in `~/.protoforge/config.json`:
 
 ## Development
 
+### Tests
+
+```bash
+npm test
+```
+
+### Debugging generation failures
+
+When generation fails, ProtoForge preserves the output directory and writes:
+- `prototype.raw.txt` (raw model output)
+- `prototype.parse-error.txt` (parse/validation error, if any)
+- `.protoforge-error.txt` (stack trace / error context)
+
+This makes it much easier to reproduce and file issues.
+
 ### Project Structure
 
 ```
