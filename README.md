@@ -102,11 +102,17 @@ Before first use, run the setup wizard:
 protoforge setup
 ```
 
+ProtoForge is designed so **users supply their own API keys**. The wizard defaults to storing an **env var name** (recommended), not the key itself.
+
 This will guide you through configuring:
 1. **Chatbot** (Required): Ollama (local), OpenAI, Groq, Anthropic, or Gemini
-2. **Image Generation** (Optional): OpenAI DALL-E, Groq Flux, or local Stable Diffusion
-3. **3D Generation** (Optional): Meshy AI for text-to-3D models
-4. **General Settings**: Output directory, browser preferences
+2. **General Settings**: Output directory, browser preferences
+
+Example (OpenAI):
+```bash
+export OPENAI_API_KEY="..."
+protoforge setup
+```
 
 ## Usage
 

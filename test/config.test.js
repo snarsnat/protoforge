@@ -29,6 +29,15 @@ describe('config', () => {
     expect(ai.provider).toBe('mock');
   });
 
+  test('apiKeyEnv resolves from environment', async () => {
+    process.env.TEST_PROTOFORGE_KEY = 'shhh';
+    const cfg = await import('../lib/core/config.js');
+    cfg.setAIConfig({ provider: 'openai', model: 'gpt-4o-mini', apiKeyEnv: 'TEST_PROTOFORGE_KEY' });
+    const ai = cfg.getAIConfig();
+    expect(ai.provider).toBe('openai');
+    expect(ai.apiKey).toBe('shhh');
+  });
+
   test('resetConfig clears values', async () => {
     const cfg = await import('../lib/core/config.js');
     cfg.setConfigValue('aiProvider', 'mock');
