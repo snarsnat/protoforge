@@ -5,168 +5,624 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ProtoForge</title>
   <style>
+    /* ANTI-AI-DESIGN: STRICTLY AGAINST COMMON AI TROPES */
+    
+    /* TROPE 1: Rounded chat bubbles → USE SQUARE MESSAGES */
+    /* TROPE 2: Soft gradients → USE FLAT BOLD COLORS */
+    /* TROPE 3: Pill-shaped inputs → USE SQUARE INPUTS */
+    /* TROPE 4: Typing bouncing dots → USE STATIC INDICATORS */
+    /* TROPE 5: Cute avatars → USE INITIALS ONLY */
+    /* TROPE 6: Smooth animations → USE ABRUPT TRANSITIONS */
+    /* TROPE 7: Soft shadows → USE HARD BORDERS */
+    /* TROPE 8: "Copilot/Assistant" branding → USE PLAIN HEADERS */
+    
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; height: 100vh; overflow: hidden; }
-    .container { display: flex; height: 100vh; max-width: 1400px; margin: 0 auto; background: #fff; box-shadow: 0 0 30px rgba(0,0,0,0.08); }
     
-    /* Chat Panel */
-    .chat-panel { flex: 1; display: flex; flex-direction: column; min-width: 400px; }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
-    .message { display: flex; gap: 12px; max-width: 85%; }
-    .message.user { align-self: flex-end; flex-direction: row-reverse; }
-    .avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; flex-shrink: 0; }
-    .message.user .avatar { background: #007aff; color: #fff; }
-    .message.assistant .avatar { background: #34c759; color: #fff; }
-    .bubble { padding: 14px 18px; border-radius: 18px; font-size: 14px; line-height: 1.6; }
-    .message.user .bubble { background: #007aff; color: #fff; border-bottom-right-radius: 4px; }
-    .message.assistant .bubble { background: #f0f0f0; color: #333; border-bottom-left-radius: 4px; }
-    .bubble ul { margin: 10px 0 0 18px; }
-    .bubble li { margin-bottom: 6px; }
+    body {
+      font-family: 'Arial Black', 'Helvetica Neue', sans-serif;
+      background: #000;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+      /* TROPE: Minimalist whitespace → USE DENSE LAYOUT */
+    }
     
-    /* Input Area */
-    .input-area { padding: 20px 24px; background: #fff; border-top: 1px solid #eee; }
-    .input-wrapper { display: flex; gap: 12px; align-items: flex-end; }
-    .chat-input { flex: 1; padding: 14px 18px; border: 1px solid #ddd; border-radius: 24px; font-size: 14px; resize: none; outline: none; font-family: inherit; max-height: 120px; }
-    .chat-input:focus { border-color: #007aff; }
-    .send-btn { width: 48px; height: 48px; border-radius: 50%; background: #007aff; color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-    .send-btn:hover { background: #0056b3; transform: scale(1.05); }
-    .send-btn:disabled { background: #ccc; transform: none; cursor: not-allowed; }
-    .options { display: flex; gap: 10px; margin-top: 12px; }
-    .options select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; background: #fff; cursor: pointer; }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      height: 100vh;
+      border: 3px solid #fff;
+    }
     
-    /* Progress */
-    .progress { padding: 0 24px 16px; display: none; }
-    .progress.active { display: block; }
-    .progress-bar { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, #007aff, #34c759); border-radius: 3px; transition: width 0.3s; }
-    .progress-text { font-size: 12px; color: #666; margin-top: 6px; text-align: center; }
+    /* NO ROUNDED CORNERS - EVER */
+    * { border-radius: 0 !important; }
     
-    /* Right Panel */
-    .output-panel { width: 380px; background: #fafafa; border-left: 1px solid #eee; display: flex; flex-direction: column; }
-    .tabs { display: flex; border-bottom: 1px solid #eee; background: #fff; }
-    .tab { flex: 1; padding: 14px; font-size: 13px; font-weight: 500; color: #666; border: none; background: none; cursor: pointer; position: relative; }
-    .tab:hover { color: #333; }
-    .tab.active { color: #007aff; }
-    .tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #007aff; }
-    .content { flex: 1; overflow-y: auto; padding: 16px; }
-    .panel { display: none; }
-    .panel.active { display: block; }
+    /* BOLD COLOR THEME - NO GRADIENTS */
+    .chat-section {
+      display: flex;
+      flex-direction: column;
+      border-right: 3px solid #fff;
+    }
     
-    /* Files */
-    .file-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-    .file-item:hover { background: #f0f0f0; }
-    .file-item.selected { background: #e8f2ff; color: #007aff; }
-    .file-item.folder { font-weight: 500; }
+    .header {
+      padding: 16px 20px;
+      background: #ff0040; /* BOLD RED - AGAINST SKY BLUE AI COLORS */
+      border-bottom: 3px solid #fff;
+    }
     
-    /* Code */
-    .code-section { margin-bottom: 12px; }
-    .code-filename { font-size: 12px; color: #666; margin-bottom: 6px; }
-    .code-block { background: #f8f9fa; border: 1px solid #eee; border-radius: 8px; padding: 12px; font-family: 'SF Mono', Monaco, monospace; font-size: 12px; white-space: pre-wrap; max-height: 150px; overflow-y: auto; }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
     
-    /* Status Bar */
-    .status-bar { padding: 10px 24px; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-between; font-size: 12px; color: #666; }
+    .header-subtitle {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.8;
+    }
     
-    /* Welcome */
-    .welcome { text-align: center; padding: 40px; color: #666; }
-    .welcome h2 { font-size: 18px; color: #333; margin-bottom: 10px; }
-    .suggestions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 20px; }
-    .chip { padding: 8px 16px; background: #f0f0f0; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
-    .chip:hover { background: #e0e0e0; }
+    /* NO CHAT BUBBLES - USE SQUARE LIST LAYOUT */
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+      background: #111;
+    }
     
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+    .message {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      border-bottom: 2px solid #333;
+      padding: 16px 20px;
+      gap: 16px;
+    }
     
-    /* Typing */
-    .typing { display: flex; gap: 4px; padding: 12px 16px; }
-    .dot { width: 8px; height: 8px; background: #999; border-radius: 50%; animation: typing 1.4s infinite; }
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+    .message.user {
+      background: #001a33; /* DARK BLUE - AGAINST LIGHT AI COLORS */
+      border-left: 4px solid #00d4ff;
+    }
+    
+    .message.assistant {
+      background: #1a000d; /* DARK MAROON - AGAINST SOFT GRAY */
+      border-left: 4px solid #ff0040;
+    }
+    
+    .msg-avatar {
+      width: 48px;
+      height: 48px;
+      background: #fff;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+    }
+    
+    .msg-content {
+      font-size: 14px;
+      line-height: 1.5;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .msg-content strong {
+      color: #00d4ff;
+    }
+    
+    .msg-content ul {
+      margin: 12px 0;
+      padding-left: 20px;
+    }
+    
+    .msg-content li {
+      margin-bottom: 6px;
+    }
+    
+    /* NO SOFT INPUTS - USE HARSH SQUARE INPUT */
+    .input-section {
+      padding: 16px;
+      background: #222;
+      border-top: 3px solid #fff;
+    }
+    
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+    }
+    
+    .main-input {
+      width: 100%;
+      padding: 16px;
+      background: #000;
+      border: 2px solid #555;
+      color: #fff;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .main-input:focus {
+      outline: none;
+      border-color: #ff0040;
+    }
+    
+    .send-btn {
+      padding: 16px 24px;
+      background: #00ff00; /* BOLD GREEN - AGAINST SOFT BLUE */
+      border: 2px solid #00ff00;
+      color: #000;
+      font-weight: 900;
+      font-size: 14px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    
+    .send-btn:hover {
+      background: #000;
+      color: #00ff00;
+    }
+    
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .options select {
+      padding: 10px;
+      background: #000;
+      border: 2px solid #555;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    /* RIGHT PANEL - HIGH CONTRAST */
+    .output-panel {
+      background: #000;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .output-tabs {
+      display: flex;
+      border-bottom: 3px solid #fff;
+    }
+    
+    .output-tab {
+      flex: 1;
+      padding: 14px 8px;
+      background: #333;
+      border: none;
+      color: #888;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    
+    .output-tab:hover {
+      background: #444;
+      color: #fff;
+    }
+    
+    .output-tab.active {
+      background: #ff0040;
+      color: #fff;
+    }
+    
+    .output-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+    }
+    
+    .tab-panel {
+      display: none;
+    }
+    
+    .tab-panel.active {
+      display: block;
+    }
+    
+    /* FILE LIST - NO CARDS, USE LIST */
+    .file-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #333;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+    
+    .file-item:hover {
+      background: #111;
+    }
+    
+    .file-item.selected {
+      background: #ff0040;
+      color: #fff;
+    }
+    
+    .file-icon {
+      width: 24px;
+      margin-right: 12px;
+      text-align: center;
+    }
+    
+    /* CODE VIEW - HIGH CONTRAST */
+    .code-section {
+      padding: 16px;
+      border-bottom: 2px solid #333;
+    }
+    
+    .code-filename {
+      font-size: 11px;
+      color: #ff0040;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    
+    .code-block {
+      background: #0a0a0a;
+      border: 1px solid #333;
+      padding: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      white-space: pre-wrap;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    
+    /* STATUS BAR - NO SOFT TEXT */
+    .status-bar {
+      padding: 12px 16px;
+      background: #222;
+      border-top: 3px solid #fff;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    
+    /* NO WELCOME SCREEN - JUST HEADER */
+    
+    /* PROGRESS - SQUARE BAR */
+    .progress-container {
+      padding: 12px 16px;
+      background: #111;
+      border-top: 2px solid #333;
+      display: none;
+    }
+    
+    .progress-container.active {
+      display: block;
+    }
+    
+    .progress-bar {
+      height: 12px;
+      background: #333;
+      border: 1px solid #555;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: #ff0040;
+      transition: none; /* NO SMOOTH ANIMATION */
+    }
+    
+    .progress-text {
+      font-size: 10px;
+      margin-top: 6px;
+      color: #888;
+      text-transform: uppercase;
+    }
+    
+    /* SUGGESTIONS - SQUARE CHIPS */
+    .suggestions {
+      padding: 16px;
+      border-bottom: 2px solid #333;
+    }
+    
+    .suggestions-label {
+      font-size: 10px;
+      color: #555;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    
+    .chip {
+      display: inline-block;
+      padding: 8px 12px;
+      background: #222;
+      border: 1px solid #444;
+      margin: 0 8px 8px 0;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    .chip:hover {
+      background: #ff0040;
+      border-color: #ff0040;
+      color: #fff;
+    }
+    
+    /* NO TYPING ANIMATION - USE STATIC TEXT */
+    .typing-indicator {
+      padding: 16px 20px;
+      background: #1a000d;
+      border-left: 4px solid #ff0040;
+      font-size: 12px;
+      color: #ff0040;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    
+    /* SCROLLBARS - SQUARE */
+    ::-webkit-scrollbar {
+      width: 10px;
+      background: #111;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #444;
+      border: 1px solid #000;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff0040;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="chat-panel">
-      <div class="chat-messages" id="messages">
-        <div class="welcome" id="welcome">
-          <h2>What would you like to build?</h2>
-          <p>Describe your prototype idea and I'll generate everything you need.</p>
-          <div class="suggestions">
-            <div class="chip" onclick="setPrompt('A smart plant monitor with moisture sensor')">🌱 Smart plant monitor</div>
-            <div class="chip" onclick="setPrompt('Weather station with ESP32')">🌤️ ESP32 weather station</div>
-            <div class="chip" onclick="setPrompt('IoT dashboard for sensors')">📊 IoT dashboard</div>
-            <div class="chip" onclick="setPrompt('Bluetooth LE sensor logger')">📡 BLE sensor logger</div>
+    <!-- CHAT SECTION -->
+    <div class="chat-section">
+      <div class="header">
+        <h1>PROTOFORGE</h1>
+        <div class="header-subtitle">AI Prototype Builder</div>
+      </div>
+      
+      <div class="messages" id="messages">
+        <div class="suggestions" id="suggestions">
+          <div class="suggestions-label">Try describing a project</div>
+          <div class="chip" onclick="setPrompt('Smart plant monitor with moisture sensor')">🌱 Plant monitor</div>
+          <div class="chip" onclick="setPrompt('ESP32 weather station with display')">🌤️ ESP32 weather</div>
+          <div class="chip" onclick="setPrompt('IoT dashboard for sensors')">📊 IoT dashboard</div>
+          <div class="chip" onclick="setPrompt('Bluetooth LE sensor logger')">📡 BLE logger</div>
+        </div>
+      </div>
+      
+      <div class="progress-container" id="progress">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Processing...</div>
+      </div>
+      
+      <div class="input-section">
+        <div class="input-row">
+          <textarea class="main-input" id="input" rows="2" placeholder="Describe your prototype..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();generate();}"></textarea>
+          <button class="send-btn" id="sendBtn" onclick="generate()">GENERATE</button>
+        </div>
+        <div class="options">
+          <select id="type">
+            <option value="hybrid">HYBRID</option>
+            <option value="hardware">HARDWARE</option>
+            <option value="software">SOFTWARE</option>
+          </select>
+          <select id="provider">
+            <option value="ollama">OLLAMA</option>
+            <option value="openai">OPENAI</option>
+            <option value="groq">GROQ</option>
+            <option value="anthropic">CLAUDE</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <!-- OUTPUT PANEL -->
+    <div class="output-panel">
+      <div class="output-tabs">
+        <div class="output-tab active" onclick="switchTab('files')">FILES</div>
+        <div class="output-tab" onclick="switchTab('code')">CODE</div>
+        <div class="output-tab" onclick="switchTab('bom')">BOM</div>
+        <div class="output-tab" onclick="switchTab('guide')">GUIDE</div>
+      </div>
+      
+      <div class="output-content">
+        <div class="tab-panel active" id="panel-files">
+          <div id="files">
+            <div style="padding: 20px; color: #555; font-size: 12px; text-transform: uppercase;">
+              No project loaded
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-panel" id="panel-code">
+          <div id="code">
+            <div style="padding: 20px; color: #555; font-size: 12px; text-transform: uppercase;">
+              Select a file to view
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-panel" id="panel-bom">
+          <div id="bom">
+            <div style="padding: 20px; color: #555; font-size: 12px; text-transform: uppercase;">
+              Bill of Materials
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-panel" id="panel-guide">
+          <div id="guide">
+            <div style="padding: 20px; color: #555; font-size: 12px; text-transform: uppercase;">
+              Build guide
+            </div>
           </div>
         </div>
       </div>
-      <div class="progress" id="progress"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div><div class="progress-text" id="progressText">Generating...</div></div>
-      <div class="input-area">
-        <div class="input-wrapper">
-          <textarea class="chat-input" id="input" rows="1" placeholder="Describe your prototype..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();generate();}"></textarea>
-          <button class="send-btn" id="sendBtn" onclick="generate()">→</button>
-        </div>
-        <div class="options">
-          <select id="type"><option value="hybrid">Hybrid</option><option value="hardware">Hardware</option><option value="software">Software</option></select>
-          <select id="provider"><option value="ollama">Ollama</option><option value="openai">OpenAI</option><option value="groq">Groq</option><option value="anthropic">Claude</option></select>
-        </div>
-      </div>
-    </div>
-    <div class="output-panel">
-      <div class="tabs">
-        <div class="tab active" onclick="switchTab('files')">Files</div>
-        <div class="tab" onclick="switchTab('code')">Code</div>
-        <div class="tab" onclick="switchTab('bom')">BOM</div>
-        <div class="tab" onclick="switchTab('guide')">Guide</div>
-      </div>
-      <div class="content">
-        <div class="panel active" id="panel-files">
-          <div id="files" style="color: #999; text-align: center; padding: 40px;">No project yet. Start chatting!</div>
-        </div>
-        <div class="panel" id="panel-code">
-          <div id="code" style="color: #999; text-align: center; padding: 40px;">Select a file to view code</div>
-        </div>
-        <div class="panel" id="panel-bom">
-          <div id="bom" style="color: #999; text-align: center; padding: 40px;">Bill of Materials will appear here</div>
-        </div>
-        <div class="panel" id="panel-guide">
-          <div id="guide" style="color: #999; text-align: center; padding: 40px;">Build guide will appear here</div>
-        </div>
+      
+      <div class="status-bar">
+        <span id="statusProvider">PROVIDER: OLLAMA</span>
+        <span id="statusState">READY</span>
       </div>
     </div>
   </div>
+  
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script>
     let projectPath = null, prototype = null, generating = false;
-    mermaid.initialize({startOnLoad:true});
-    function setPrompt(t){document.getElementById('input').value=t;}
-    function esc(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
-    function addMsg(role,html){
-      const m=document.createElement('div');m.className='message '+role;
-      m.innerHTML='<div class="avatar">'+(role==='user'?'U':'AI')+'</div><div class="bubble">'+html+'</div>';
-      document.getElementById('messages').appendChild(m);document.getElementById('messages').scrollTop=document.getElementById('messages').scrollHeight;
+    mermaid.initialize({startOnLoad: true, theme: 'dark'});
+    
+    function setPrompt(text) {
+      document.getElementById('input').value = text;
+      document.getElementById('input').focus();
     }
-    async function generate(){
-      const d=document.getElementById('input').value,t=document.getElementById('type').value,p=document.getElementById('provider').value;
-      if(!d.trim()||generating)return;
-      document.getElementById('welcome')?.remove();
-      generating=true;document.getElementById('sendBtn').disabled=true;
-      addMsg('user',d);
-      const typing=document.createElement('div');typing.className='message assistant';typing.id='typing';typing.innerHTML='<div class="avatar">AI</div><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-      document.getElementById('messages').appendChild(typing);document.getElementById('messages').scrollTop=document.getElementById('messages').scrollHeight;
-      try{
-        const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({description:d,type:t,provider:p})});
-        const data=await res.json();
+    
+    function esc(text) {
+      const d = document.createElement('div');
+      d.textContent = text;
+      return d.innerHTML;
+    }
+    
+    function addMessage(role, html) {
+      const msgs = document.getElementById('messages');
+      const sugg = document.getElementById('suggestions');
+      if (sugg) sugg.style.display = 'none';
+      
+      const msg = document.createElement('div');
+      msg.className = 'message ' + role;
+      msg.innerHTML = '<div class="msg-avatar">' + (role === 'user' ? 'U' : 'AI') + '</div>' +
+                      '<div class="msg-content">' + html + '</div>';
+      msgs.appendChild(msg);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+    
+    async function generate() {
+      const desc = document.getElementById('input').value;
+      const type = document.getElementById('type').value;
+      const provider = document.getElementById('provider').value;
+      
+      if (!desc.trim() || generating) return;
+      
+      generating = true;
+      document.getElementById('sendBtn').disabled = true;
+      addMessage('user', desc);
+      
+      // NO ANIMATED TYPING - STATIC INDICATOR
+      const typing = document.createElement('div');
+      typing.id = 'typing';
+      typing.className = 'typing-indicator';
+      typing.textContent = '[ AI PROCESSING... ]';
+      document.getElementById('messages').appendChild(typing);
+      document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+      
+      // Show progress
+      const prog = document.getElementById('progress');
+      prog.classList.add('active');
+      document.getElementById('progressFill').style.width = '30%';
+      document.getElementById('progressText').textContent = 'CONNECTING TO ' + provider.toUpperCase();
+      document.getElementById('statusState').textContent = 'PROCESSING';
+      
+      try {
+        document.getElementById('progressFill').style.width = '60%';
+        document.getElementById('progressText').textContent = 'GENERATING PROTOTYPE...';
+        
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({description: desc, type: type, provider: provider})
+        });
+        
+        document.getElementById('progressFill').style.width = '90%';
+        document.getElementById('progressText').textContent = 'WRITING FILES...';
+        
+        const data = await res.json();
         document.getElementById('typing').remove();
-        if(data.success){projectPath=data.outputDir;prototype=data.prototype;addMsg('assistant',formatResp(data.prototype));await loadFiles();}
-        else throw new Error(data.error);
-      }catch(e){document.getElementById('typing').remove();addMsg('assistant','Error: '+e.message);}
-      generating=false;document.getElementById('sendBtn').disabled=false;document.getElementById('input').value='';
+        
+        if (data.success) {
+          projectPath = data.outputPath;
+          prototype = data.prototype;
+          addMessage('assistant', formatResponse(data.prototype));
+          await loadFiles();
+          document.getElementById('progressFill').style.width = '100%';
+          document.getElementById('progressText').textContent = 'COMPLETE';
+        } else {
+          throw new Error(data.error || 'Generation failed');
+        }
+      } catch (e) {
+        document.getElementById('typing').remove();
+        addMessage('assistant', 'ERROR: ' + e.message);
+      }
+      
+      generating = false;
+      document.getElementById('sendBtn').disabled = false;
+      document.getElementById('input').value = '';
+      
+      setTimeout(() => {
+        document.getElementById('progress').classList.remove('active');
+        document.getElementById('statusState').textContent = 'READY';
+      }, 1500);
     }
-    function formatResp(p){let h='<strong>'+(p.overview?.projectName||'Untitled')+'</strong><br><br>';h+=p.overview?.description||'';h+='<br><br><strong>Type:</strong> '+(p.type||'hybrid');h+='<br><br><strong>Files:</strong><ul>';(p.codeSnippets||[]).forEach(f=>h+='<li>'+f.filename+'</li>');h+='</ul>';return h;}
-    async function loadFiles(){const name=projectPath.split('/').pop();const r=await fetch('/api/project/'+name+'/tree');const data=await r.json();let html='';for(const e of (data.entries||[])){if(e.type==='dir'){html+='<div class="file-item folder" onclick="toggleDir(\''+e.name+'\')">📁 '+e.name+'</div><div id="dir-'+e.name+'" style="display:none;padding-left:16px;"></div>'}else{html+='<div class="file-item" onclick="openFile(\''+e.name+'\')">📄 '+e.name+'</div>'}}document.getElementById('files').innerHTML=html;}
-    async function openFile(name){document.querySelectorAll('.file-item').forEach(i=>i.classList.remove('selected'));event.target.classList.add('selected');switchTab('code');const r=await fetch('/api/project/'+projectPath.split('/').pop()+'/file?path='+encodeURIComponent(name));const d=await r.json();document.getElementById('code').innerHTML='<div class="code-section"><div class="code-filename">'+esc(name)+'</div><div class="code-block">'+esc(d.content?.slice(0,2000)||'')+'</div></div>';}
-    function switchTab(tab){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));event.target.classList.add('active');document.getElementById('panel-'+tab).classList.add('active');}
+    
+    function formatResponse(p) {
+      let html = '<strong>' + (p.overview?.projectName || 'UNTITLED') + '</strong><br><br>';
+      html += p.overview?.description || '';
+      html += '<br><br><strong>TYPE: ' + (p.type || 'HYBRID').toUpperCase() + '</strong>';
+      html += '<br><br><strong>FILES:</strong><ul>';
+      (p.codeSnippets || []).forEach(f => {
+        html += '<li>' + f.filename + '</li>';
+      });
+      html += '</ul>';
+      return html;
+    }
+    
+    async function loadFiles() {
+      const name = projectPath.split('/').pop();
+      const r = await fetch('/api/project/' + name + '/tree');
+      const data = await r.json();
+      
+      let html = '';
+      for (const e of (data.entries || [])) {
+        if (e.type === 'dir') {
+          html += '<div class="file-item folder" onclick="toggleDir(\'' + esc(e.name) + '\')">';
+          html += '<span class="file-icon">[DIR]</span><span>' + esc(e.name) + '</span></div>';
+          html += '<div id="dir-' + esc(e.name) + '" style="display:none;padding-left:32px;"></div>';
+        } else {
+          html += '<div class="file-item" onclick="openFile(\'' + esc(e.name) + '\')">';
+          html += '<span class="file-icon">[FILE]</span><span>' + esc(e.name) + '</span></div>';
+        }
+      }
+      document.getElementById('files').innerHTML = html || '<div style="padding:20px;color:#555;">NO FILES</div>';
+    }
+    
+    async function openFile(name) {
+      document.querySelectorAll('.file-item').forEach(i => i.classList.remove('selected'));
+      event.target.closest('.file-item').classList.add('selected');
+      switchTab('code');
+      
+      const r = await fetch('/api/project/' + projectPath.split('/').pop() + '/file?path=' + encodeURIComponent(name));
+      const d = await r.json();
+      
+      document.getElementById('code').innerHTML = '<div class="code-section">' +
+        '<div class="code-filename">' + esc(name) + '</div>' +
+        '<div class="code-block">' + esc(d.content?.slice(0, 3000) || '') + '</div></div>';
+    }
+    
+    function switchTab(tab) {
+      document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('panel-' + tab).classList.add('active');
+    }
   </script>
 </body>
 </html>
