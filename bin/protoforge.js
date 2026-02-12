@@ -8,6 +8,9 @@
  * and zero concessions to the "AI assistant" chat bubble paradigm.
  */
 
+// Register esbuild for JSX transpilation before any imports
+import 'esbuild-register';
+
 import { Command } from 'commander';
 import path from 'path';
 import { fileURLToPath } from 'url';
