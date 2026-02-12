@@ -12,11 +12,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs-extra';
 import chalk from 'chalk';
-import { loadUserEnv } from './lib/core/env.js';
+import { loadUserEnv } from '../lib/core/env.js';
 import {
   getConfig, getConfigValue, setConfigValue, getModelConfig, setModelConfig,
   runSetupWizard, printConfigStatus, resetConfig, exportConfig, importConfig
-} from './lib/core/config.js';
+} from '../lib/core/config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
@@ -48,7 +48,7 @@ async function startTUI() {
   }
   const { render } = await import('ink');
   const React = (await import('react')).default;
-  const { default: App } = await import('./lib/ui/App.js');
+  const { default: App } = await import('../lib/ui/App.js');
   render(React.createElement(App));
 }
 
@@ -93,8 +93,8 @@ async function main() {
     .option('--zip', 'Create zip archive', false)
     .action(async (descParts, opts) => {
       const description = descParts.join(' ').trim();
-      const { generatePrototype } = await import('./lib/core/generator.js');
-      const { createProjectZip } = await import('./lib/core/output.js');
+      const { generatePrototype } = await import('../lib/core/generator.js');
+      const { createProjectZip } = await import('../lib/core/output.js');
       
       if (opts.provider || opts.model) {
         setModelConfig({ primary: `${opts.provider}/${opts.model}` });
@@ -211,7 +211,7 @@ async function main() {
 
       if (opts.list) {
         console.log(chalk.white('\nAvailable providers:'));
-        const { getAvailableProviders } = await import('./lib/core/config.js');
+        const { getAvailableProviders } = await import('../lib/core/config.js');
         const providers = getAvailableProviders();
         providers.forEach(p => {
           console.log(`  ${chalk.cyan(p.id)}: ${p.name}`);
@@ -248,7 +248,7 @@ async function main() {
     .action(async (opts) => {
       showBanner();
       const port = opts.port || getConfigValue('webPort', 3000);
-      const { startWebServer } = await import('./lib/web/server.js');
+      const { startWebServer } = await import('../lib/web/server.js');
       await startWebServer(port);
     });
 
@@ -289,7 +289,7 @@ async function main() {
     
     if (parsedOpts.web) {
       const port = getConfigValue('webPort', 3000);
-      const { startWebServer } = await import('./lib/web/server.js');
+      const { startWebServer } = await import('../lib/web/server.js');
       await startWebServer(port);
     } else {
       await startTUI();
